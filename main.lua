@@ -53,7 +53,6 @@ function love.load()
 	local objectFiles = {}
 	recursiveEnumerate("objects", objectFiles)
 	makeFileRequired(objectFiles)
-	hyperhyper = HyperCircle(400, 300, 50, 10, 120)
 end
 
 function recursiveEnumerate(filePath, fileList)
@@ -80,5 +79,5 @@ function love.update(dt)
 end
 
 function love.draw()
-	hyperhyper:draw()
+	
 end
