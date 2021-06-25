@@ -48,15 +48,15 @@ end
 -- Main loop END
 
 function love.load()
-    love.window.setMode(1000, 800, {vsync=1})
 	local objectFiles = {}
 	recursiveEnumerate("objects", objectFiles)
 	makeFileRequired(objectFiles)
+	CircleOne = Circle(400, 300, 50)
 end
 
 function recursiveEnumerate(filePath, fileList)
 	local fileOrFolderList = love.filesystem.getDirectoryItems(filePath)
-	for _, item in iPairs(fileOrFolderList) do
+	for _, item in ipairs(fileOrFolderList) do
 		local fileOrFolder = filePath .. "/" .. item
 		if love.filesystem.isFile(fileOrFolder) then
 			table.insert(fileList, fileOrFolder)
@@ -67,7 +67,7 @@ function recursiveEnumerate(filePath, fileList)
 end
 
 function makeFileRequired(files)
-	for _, file in files do
+	for _, file in ipairs(files) do
 		local fileName = file:sub(1, -5)
 		require(fileName)
 	end
@@ -78,5 +78,5 @@ function love.update(dt)
 end
 
 function love.draw()
-
+	CircleOne:draw()
 end
