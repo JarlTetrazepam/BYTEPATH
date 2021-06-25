@@ -1,4 +1,5 @@
 Object = require "libs/classic-master/classic"
+Input = require("libs/boipushy-master/Input")
 
 -- Main loop START
 function love.run()
@@ -48,6 +49,7 @@ end
 -- Main loop END
 
 function love.load()
+	input = Input()
 	local objectFiles = {}
 	recursiveEnumerate("objects", objectFiles)
 	makeFileRequired(objectFiles)
