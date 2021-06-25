@@ -1,3 +1,5 @@
+Object = require "libs/classic-master/classic"
+
 -- Main loop START
 function love.run()
 	if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
@@ -47,7 +49,28 @@ end
 
 function love.load()
     love.window.setMode(1000, 800, {vsync=1})
-    image = love.graphics.newImage('Idle (1).png')
+	local objectFiles = {}
+	recursiveEnumerate("objects", objectFiles)
+	makeFileRequired(objectFiles)
+end
+
+function recursiveEnumerate(filePath, fileList)
+	local fileOrFolderList = love.filesystem.getDirectoryItems(filePath)
+	for _, item in iPairs(fileOrFolderList) do
+		local fileOrFolder = filePath .. "/" .. item
+		if love.filesystem.isFile(fileOrFolder) then
+			table.insert(fileList, fileOrFolder)
+		elseif love.filesystem.isDirectory(fileOrFolder) then
+			recursiveEnumerate(fileOrFolder, fileList)
+		end
+	end
+end
+
+function makeFileRequired(files)
+	for _, file in files do
+		local fileName = file:sub(1, -5)
+		require(fileName)
+	end
 end
 
 function love.update(dt)
@@ -55,6 +78,5 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.print(love.timer.step(), 900, 500)
-    love.graphics.draw(image, love.math.random(0, 800), 0)
+
 end
