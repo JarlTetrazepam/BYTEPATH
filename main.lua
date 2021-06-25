@@ -51,7 +51,7 @@ function love.load()
 	local objectFiles = {}
 	recursiveEnumerate("objects", objectFiles)
 	makeFileRequired(objectFiles)
-	CircleOne = Circle(400, 300, 50)
+	hyperhyper = HyperCircle(400, 300, 50, 10, 120)
 end
 
 function recursiveEnumerate(filePath, fileList)
@@ -78,5 +78,5 @@ function love.update(dt)
 end
 
 function love.draw()
-	CircleOne:draw()
+	hyperhyper:draw()
 end
