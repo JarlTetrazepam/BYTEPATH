@@ -48,11 +48,18 @@ function love.run()
 end
 -- Main loop END
 
+function add()
+	local sum = 0
+	sum = sum + 1
+	print(sum)
+end
+
 function love.load()
-	input = Input()
 	local objectFiles = {}
 	recursiveEnumerate("objects", objectFiles)
 	makeFileRequired(objectFiles)
+	input = Input()
+	input:bind("+", "add")
 end
 
 function recursiveEnumerate(filePath, fileList)
@@ -75,9 +82,9 @@ function makeFileRequired(files)
 end
 
 function love.update(dt)
-
+	if input:down("add", 0.25) then add() end
 end
 
 function love.draw()
-	
+
 end
