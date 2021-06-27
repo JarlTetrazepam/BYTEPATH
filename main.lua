@@ -1,6 +1,6 @@
 Object = require "libs/classic-master/classic"
 Input = require("libs/boipushy-master/Input")
-Timer = require("libs/hump-master/timer")
+Timer = require("libs/EnhancedTimer-master/EnhancedTimer")
 
 -- Main loop START
 function love.run()
