@@ -49,12 +49,6 @@ function love.run()
 end
 -- Main loop END
 
-function add()
-	local sum = 0
-	sum = sum + 1
-	print(sum)
-end
-
 function love.load()
 	local objectFiles = {}
 	recursiveEnumerate("objects", objectFiles)
