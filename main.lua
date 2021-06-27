@@ -1,5 +1,6 @@
 Object = require "libs/classic-master/classic"
 Input = require("libs/boipushy-master/Input")
+Timer = require("libs/hump-master/timer")
 
 -- Main loop START
 function love.run()
@@ -59,7 +60,7 @@ function love.load()
 	recursiveEnumerate("objects", objectFiles)
 	makeFileRequired(objectFiles)
 	input = Input()
-	input:bind("+", "add")
+	timer = Timer()
 end
 
 function recursiveEnumerate(filePath, fileList)
@@ -82,7 +83,7 @@ function makeFileRequired(files)
 end
 
 function love.update(dt)
-	if input:down("add", 0.25) then add() end
+	timer:update(dt)
 end
 
 function love.draw()
