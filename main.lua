@@ -53,10 +53,19 @@ function love.load()
 	input = Input()
 	timer = Timer()
 
-	HP = {x = 300, y = 250, w = 400, h = 50}
-	HPBg = {x = 300, y = 250, w = 400, h = 50}
-	input:bind("d", "damage")
+	circle = {radius = 24}
+	input:bind("s", "shrink")
+	input:bind("e", "expand")
+end
 
+function expand()
+	timer:cancel("shrink")
+	timer:tween("expand",2, circle, {radius = 96}, "in-out-cubic")
+end
+
+function shrink()
+	timer:cancel("expand")
+	timer:tween("shrink",2, circle, {radius = 24}, "in-out-cubic")
 end
 
 function recursiveEnumerate(filePath, fileList)
@@ -78,29 +87,17 @@ function makeFileRequired(files)
 	end
 end
 
-function damage(val)
-	local deducted = HP.w - val
-	if deducted < 0 then
-		deducted = 0
-	end
-	if HP.w > 0 and HPBg.w > 0 then
-		timer:tween("w",0.3, HP, {w = deducted}, "in-out-cubic", function()
-			timer:tween("w",1, HPBg, {w = HP.w}, "in-out-cubic")
-		end)
-	end
-end
 
 function love.update(dt)
 	timer:update(dt)
-	if input:down("damage", 0.8) then
-		dmgVal = love.math.random(10, 40)
-		damage(dmgVal) 
+	if input:pressed("expand") then
+		expand()
+	end
+	if input:pressed("shrink") then
+		shrink()
 	end
 end
 
 function love.draw()
-	love.graphics.setColor(0.6,0,0)
-	love.graphics.rectangle("fill", HPBg.x, HPBg.y, HPBg.w, HPBg.h)
-	love.graphics.setColor(1,0.2,0.2)
-	love.graphics.rectangle("fill", HP.x, HP.y, HP.w, HP.h)
+	love.graphics.circle('fill', 400, 300, circle.radius)
 end
