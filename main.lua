@@ -47,11 +47,6 @@ function love.run()
 end
 -- Main loop END
 
-a = {1, 2, '3', 4, '5', 6, 7, true, 9, 10, 11, a = 1, b = 2, c = 3, {1, 2, 3}}
-b = {1, 1, 3, 4, 5, 6, 7, false}
-c = {'1', '2', '3', 4, 5, 6}
-d = {1, 4, 3, 4, 5, 6}
-
 function love.load()
 	local objectFiles = {}
 	recursiveEnumerate("objects", objectFiles)
@@ -59,7 +54,11 @@ function love.load()
 	input = Input()
 	timer = Timer()
 
-	
+	currentRoom = nil
+
+	input:bind("f1", "circleRoom")
+	input:bind("f2", "rectangleRoom")
+	input:bind("f3", "polygonRoom")
 end
 
 function recursiveEnumerate(filePath, fileList)
@@ -84,8 +83,18 @@ end
 
 function love.update(dt)
 	timer:update(dt)
+	
+	if input:pressed("circleRoom") then gotoRoom("CircleRoom") end
+	if input:pressed("rectangleRoom") then gotoRoom("RectangleRoom") end
+	if input:pressed("polygonRoom") then gotoRoom("PolygonRoom") end
+
+	if currentRoom then	currentRoom:update(dt) end
 end
 
 function love.draw()
-	
+	if currentRoom then currentRoom:draw() end
+end
+
+function gotoRoom(roomType, ...)
+	currentRoom = _G[roomType](...)
 end
