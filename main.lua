@@ -1,6 +1,7 @@
 Object = require "libs/classic-master/classic"
 Input = require("libs/boipushy-master/Input")
 Timer = require("libs/EnhancedTimer-master/EnhancedTimer")
+M = require("libs/Moses-master/moses")
 
 -- Main loop START
 function love.run()
@@ -46,6 +47,11 @@ function love.run()
 end
 -- Main loop END
 
+a = {1, 2, '3', 4, '5', 6, 7, true, 9, 10, 11, a = 1, b = 2, c = 3, {1, 2, 3}}
+b = {1, 1, 3, 4, 5, 6, 7, false}
+c = {'1', '2', '3', 4, 5, 6}
+d = {1, 4, 3, 4, 5, 6}
+
 function love.load()
 	local objectFiles = {}
 	recursiveEnumerate("objects", objectFiles)
@@ -53,19 +59,7 @@ function love.load()
 	input = Input()
 	timer = Timer()
 
-	circle = {radius = 24}
-	input:bind("s", "shrink")
-	input:bind("e", "expand")
-end
-
-function expand()
-	timer:cancel("shrink")
-	timer:tween("expand",2, circle, {radius = 96}, "in-out-cubic")
-end
-
-function shrink()
-	timer:cancel("expand")
-	timer:tween("shrink",2, circle, {radius = 24}, "in-out-cubic")
+	
 end
 
 function recursiveEnumerate(filePath, fileList)
@@ -90,14 +84,8 @@ end
 
 function love.update(dt)
 	timer:update(dt)
-	if input:pressed("expand") then
-		expand()
-	end
-	if input:pressed("shrink") then
-		shrink()
-	end
 end
 
 function love.draw()
-	love.graphics.circle('fill', 400, 300, circle.radius)
+	
 end
