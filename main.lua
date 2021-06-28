@@ -5,13 +5,12 @@ Timer = require("libs/EnhancedTimer-master/EnhancedTimer")
 -- Main loop START
 function love.run()
 	if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
-
+ 
 	-- We don't want the first frame's dt to include time taken by love.load.
 	if love.timer then love.timer.step() end
-
-	local dt = 1.0 / 60.0
-    local t = 0.0
-
+ 
+	local dt = 0
+ 
 	-- Main loop time.
 	return function()
 		-- Process events.
@@ -26,24 +25,22 @@ function love.run()
 				love.handlers[name](a,b,c,d,e,f)
 			end
 		end
-
+ 
 		-- Update dt, as we'll be passing it to update
-		--if love.timer then dt = love.timer.step() end
-
-        t = t + dt
-
+		if love.timer then dt = love.timer.step() end
+ 
 		-- Call update and draw
-		if love.update then love.update(t) end -- will pass 0 if love.timer is disabled
-
+		if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
+ 
 		if love.graphics and love.graphics.isActive() then
 			love.graphics.origin()
 			love.graphics.clear(love.graphics.getBackgroundColor())
-
+ 
 			if love.draw then love.draw() end
-
+ 
 			love.graphics.present()
 		end
-
+ 
 		if love.timer then love.timer.sleep(0.001) end
 	end
 end
@@ -55,6 +52,11 @@ function love.load()
 	makeFileRequired(objectFiles)
 	input = Input()
 	timer = Timer()
+
+	HP = {x = 300, y = 250, w = 400, h = 50}
+	HPBg = {x = 300, y = 250, w = 400, h = 50}
+	input:bind("d", "damage")
+
 end
 
 function recursiveEnumerate(filePath, fileList)
@@ -76,10 +78,29 @@ function makeFileRequired(files)
 	end
 end
 
+function damage(val)
+	local deducted = HP.w - val
+	if deducted < 0 then
+		deducted = 0
+	end
+	if HP.w > 0 and HPBg.w > 0 then
+		timer:tween("w",0.3, HP, {w = deducted}, "in-out-cubic", function()
+			timer:tween("w",1, HPBg, {w = HP.w}, "in-out-cubic")
+		end)
+	end
+end
+
 function love.update(dt)
 	timer:update(dt)
+	if input:down("damage", 0.8) then
+		dmgVal = love.math.random(10, 40)
+		damage(dmgVal) 
+	end
 end
 
 function love.draw()
-
+	love.graphics.setColor(0.6,0,0)
+	love.graphics.rectangle("fill", HPBg.x, HPBg.y, HPBg.w, HPBg.h)
+	love.graphics.setColor(1,0.2,0.2)
+	love.graphics.rectangle("fill", HP.x, HP.y, HP.w, HP.h)
 end

@@ -1,5 +1,5 @@
 local EnhancedTimer = Object:extend()
-local Timer = require 'libraries/hump/timer'
+local Timer = require 'libs/hump-master/timer'
 
 function EnhancedTimer:new()
     self.timer = Timer()
