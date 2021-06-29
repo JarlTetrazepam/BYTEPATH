@@ -7,42 +7,43 @@ require 'GameObject'
 require 'utils'
 
 function love.load()
-    local object_files = {}
-    recursiveEnumerate('objects', object_files)
-    requireFiles(object_files)
-    local room_files = {}
-    recursiveEnumerate('rooms', room_files)
-    requireFiles(room_files)
+    local objectFiles = {}
+    recursiveEnumerate('objects', objectFiles)
+    requireFiles(objectFiles)
+	
+    local roomFiles = {}
+    recursiveEnumerate('rooms', roomFiles)
+    requireFiles(roomFiles)
 
     timer = Timer()
     input = Input()
 
-    current_room = nil
+    currentRoom = nil
 end
 
 function love.update(dt)
     timer:update(dt)
-    if current_room then current_room:update(dt) end
+    if currentRoom then currentRoom:update(dt) end
 end
 
 function love.draw()
-    if current_room then current_room:draw() end
+    if currentRoom then currentRoom:draw() end
 end
 
 -- Room --
-function gotoRoom(room_type, ...)
-    current_room = _G[room_type](...)
+function gotoRoom(roomType, ...)
+    currentRoom = _G[roomType](...)
 end
 
 -- Load --
-function recursiveEnumerate(folder, file_list)
+function recursiveEnumerate(folder, fileList)
     local items = love.filesystem.getDirectoryItems(folder)
     for _, item in ipairs(items) do
         local file = folder .. '/' .. item
         if love.filesystem.isFile(file) then
-            table.insert(file_list, file)
+            table.insert(fileList, file)
         elseif love.filesystem.isDirectory(file) then
-            recursiveEnumerate(file, file_list)
+            recursiveEnumerate(file, fileList)
         end
     end
 end
