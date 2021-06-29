@@ -1,7 +1,7 @@
 Object = require 'libs/classic-master/classic'
 Timer = require 'libs/EnhancedTimer-master/EnhancedTimer'
 Input = require 'libs/boipushy-master/Input'
-fn = require 'libs/Moses-master/moses'
+M = require 'libs/Moses-master/moses'
 
 require 'GameObject'
 require 'utils'
@@ -10,7 +10,7 @@ function love.load()
     local objectFiles = {}
     recursiveEnumerate('objects', objectFiles)
     requireFiles(objectFiles)
-	
+
     local roomFiles = {}
     recursiveEnumerate('rooms', roomFiles)
     requireFiles(roomFiles)
@@ -19,6 +19,12 @@ function love.load()
     input = Input()
 
     currentRoom = nil
+
+	gotoRoom("Stage")
+	input:bind("d", function()
+		local activeObjects = currentRoom.area.gameObjects
+		table.remove(activeObjects, love.math.random(#activeObjects))
+	end)
 end
 
 function love.update(dt)
