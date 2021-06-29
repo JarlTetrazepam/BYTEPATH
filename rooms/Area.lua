@@ -21,9 +21,9 @@ function Area:draw()
     end
 end
 
-function Area:addGameObject(gameObjectType, x, y, options)
+function Area:addGameObject(objectType, x, y, options)
     local options = options or {}
-    local gameObject = _G(gameObjectType)(self, x or 0, y or 0, options)
+    local gameObject = _G[objectType](self, x or 0, y or 0, options)
     table.insert(self.gameObjects, gameObject)
     return gameObject
 end
