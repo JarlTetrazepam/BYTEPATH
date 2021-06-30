@@ -4,6 +4,13 @@ function Stage:new()
     self.area = Area()
     self.timer = Timer()
     self.mainCanvas = love.graphics.newCanvas(gw, gh)
+    self.player = self.area:addGameObject("Player", gw/2, gh/2)
+    input:bind("k", function ()
+        if self.player then
+            self.player.dead = true
+            self.player = nil 
+        end
+    end)
 end
 
 function Stage:update(dt)
@@ -19,7 +26,7 @@ function Stage:draw()
     love.graphics.clear()
 
     camera:attach(0, 0, gw, gh)
-    love.graphics.circle("line", gw/2, gh/2, 50)
+
     self.area:draw()
     camera:detach()
 
