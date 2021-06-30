@@ -3,10 +3,13 @@ Stage = Object:extend()
 function Stage:new()
     self.area = Area()
     self.timer = Timer()
-    self.mainCanvas = love.graphics.newCanvas(gw*2, gw*2)
+    self.mainCanvas = love.graphics.newCanvas(gw, gh)
 end
 
 function Stage:update(dt)
+    camera.smoother = Camera.smooth.damped(5)
+    camera:lockPosition(dt, gw/2, gh/2)
+
     self.area:update(dt)
     self.timer:update(dt)
 end
@@ -15,8 +18,10 @@ function Stage:draw()
     love.graphics.setCanvas(self.mainCanvas)
     love.graphics.clear()
 
+    camera:attach(0, 0, gw, gh)
     love.graphics.circle("line", gw/2, gh/2, 50)
     self.area:draw()
+    camera:detach()
 
     love.graphics.setCanvas()
 

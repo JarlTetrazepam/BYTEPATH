@@ -2,7 +2,7 @@ Object = require 'libs/classic-master/classic'
 Timer = require 'libs/EnhancedTimer-master/EnhancedTimer'
 Input = require 'libs/boipushy-master/Input'
 M = require 'libs/Moses-master/moses'
-Cam = require("libs/hump-master/camera")
+Camera = require("libs/hump-master/camera")
 
 require 'GameObject'
 require 'utils'
@@ -10,7 +10,7 @@ require 'utils'
 function love.load()
 	love.graphics.setDefaultFilter("nearest")
 	love.graphics.setLineStyle("rough")
-	resize(2)
+	resize(1)
     local objectFiles = {}
     recursiveEnumerate('objects', objectFiles)
     requireFiles(objectFiles)
@@ -21,12 +21,17 @@ function love.load()
 
     timer = Timer()
     input = Input()
+	camera = Camera()
 
     currentRoom = nil
 	gotoRoom("Stage")
+	input:bind("f3", function ()
+		camera:shake(4, 60, 1)
+	end)
 end
 
 function love.update(dt)
+	camera:update(dt)
     timer:update(dt)
     if currentRoom then currentRoom:update(dt) end
 end
