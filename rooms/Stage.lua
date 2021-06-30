@@ -3,25 +3,25 @@ Stage = Object:extend()
 function Stage:new()
     self.area = Area()
     self.timer = Timer()
-
-    generateRecs(self)
+    self.mainCanvas = love.graphics.newCanvas(gw*2, gw*2)
 end
 
 function Stage:update(dt)
-    self.timer:update(dt)
     self.area:update(dt)
-
-    if #self.area.gameObjects == 0 then
-        generateRecs(self)
-    end
+    self.timer:update(dt)
 end
 
 function Stage:draw()
-self.area:draw()
-end
+    love.graphics.setCanvas(self.mainCanvas)
+    love.graphics.clear()
 
-function generateRecs(self)
-    for i = 1, 10 do
-        self.area:addGameObject("Rectangle", love.math.random(800), love.math.random(600), {w = love.math.random(200), h = love.math.random(299)})
-    end
+    love.graphics.circle("line", gw/2, gh/2, 50)
+    self.area:draw()
+
+    love.graphics.setCanvas()
+
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setBlendMode("alpha", "premultiplied")
+    love.graphics.draw(self.mainCanvas, 0, 0, 0, sx, sy)
+    love.graphics.setBlendMode("alpha")
 end
