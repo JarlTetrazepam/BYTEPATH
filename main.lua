@@ -7,25 +7,57 @@ hc = require "libs/HC"
 
 require 'GameObject'
 require 'utils'
+require "globals"
 
 function love.load()
+	timer = Timer()
+    input = Input()
+	camera = Camera()
+
+	resize(2.5)
 	love.graphics.setDefaultFilter("nearest")
 	love.graphics.setLineStyle("rough")
-	resize(2)
     local objectFiles = {}
     recursiveEnumerate('objects', objectFiles)
     requireFiles(objectFiles)
+
+	flashFrames = nil
 
     local roomFiles = {}
     recursiveEnumerate('rooms', roomFiles)
     requireFiles(roomFiles)
 
-    timer = Timer()
-    input = Input()
-	camera = Camera()
-
     currentRoom = nil
 	gotoRoom("Stage")
+
+	-- Check for memory leaks
+	input:bind('f1', function()
+		print("Before collection: " .. collectgarbage("count")/1024)
+		collectgarbage()
+		print("After collection: " .. collectgarbage("count")/1024)
+		print("Object count: ")
+		local counts = type_count()
+		for k, v in pairs(counts) do print(k, v) end
+		print("-------------------------------------")
+	end)
+
+	input:bind("f2", function ()
+		gotoRoom("Stage")
+	end)
+
+	input:bind("f3", function ()
+		if currentRoom then
+			currentRoom:destroy()
+			currentRoom = nil
+		end
+	end)
+
+	-- For dramtic slow-mo
+	slowAmount = 1
+
+	input:bind("t", function ()
+		slowTime(0.5, 0.5)
+	end)
 end
 
 function love.update(dt)
@@ -36,10 +68,25 @@ end
 
 function love.draw()
     if currentRoom then currentRoom:draw() end
+
+	if flashFrames then
+		flashFrames = flashFrames - 1
+		if flashFrames == -1 then
+			flashFrames = nil
+		end
+	end
+	if flashFrames then
+		love.graphics.setColor(backgroundColor)
+		love.graphics.rectangle("fill", 0, 	0, sx * gw, sy * gh)
+		love.graphics.setColor(1,1,1)
+	end
 end
 
 -- Room --
 function gotoRoom(roomType, ...)
+	if currentRoom and currentRoom.destroy then
+		currentRoom:destroy()
+	end
     currentRoom = _G[roomType](...)
 end
 
@@ -87,7 +134,7 @@ function love.run()
 
         if love.timer then
             love.timer.step()
-            dt = love.timer.getDelta()
+            dt = love.timer.getDelta() * slowAmount
         end
 
         accumulator = accumulator + dt
@@ -108,7 +155,7 @@ function love.run()
 end
 
 function resize(scale)
-	love.window.setMode(scale*gw, scale*gh)
 	sx = scale
 	sy = scale
+	love.window.setMode(scale*gw, scale*gh)
 end
