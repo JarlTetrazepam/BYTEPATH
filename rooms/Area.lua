@@ -10,6 +10,7 @@ function Area:update(dt)
         local gameObject = self.gameObjects[i]
         gameObject:update(dt)
         if gameObject.dead then
+            gameObject:destroy()
             table.remove(self.gameObjects, i)
         end
     end
@@ -60,4 +61,13 @@ function Area:getClosestGameObjectInArea(x, y, r, classes)
         return distance(x, y, a.x, a.y) < distance(x, y, b.x, b.y)
     end)
     return objectsInArea[1]
+end
+
+function Area:destroy()
+    for i = #self.gameObjects, 1, -1 do
+        self.gameObjects[i]:destroy()
+        table.remove(self.gameObjects, i)
+    end
+    self.gameObjects = {}
+    hc.resetHash()
 end

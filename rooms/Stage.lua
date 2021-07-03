@@ -1,24 +1,19 @@
 Stage = Object:extend()
 
 function Stage:new()
-    self.area = Area()
+    self.area = Area(self)
     self.timer = Timer()
     self.mainCanvas = love.graphics.newCanvas(gw, gh)
 
-    local borderTop = hc.rectangle(0, 0, gw, 10)
-    local borderBottom = hc.rectangle(0, gh, gw, 10)
-    local borderRight = hc.rectangle(0, 0, 10, gh)
-    local borderLeft = hc.rectangle(gw, 0, 10, gh)
+    self.playerObject = self.area:addGameObject("Player", gw/2, gh/2)
+    for i = 1, 10, 1 do
+        --self.area:addGameObject("Circle", random(gw), random(gh))
+    end
 
-    input:bind("r", function ()
-        for _, object in pairs(self.area.gameObjects) do
-            object.dead = true
-        end
-        self.area:addGameObject("Player", gw/2, gh/2)
-        for i = 1, 10 do
-            self.area:addGameObject("Projectile", random(gw), random(gh))
-        end
-    end)
+    input:bind("a", "left")
+    input:bind("d", "right")
+    input:bind("w", "up")
+    input:bind("s", "down")
 end
 
 function Stage:update(dt)
@@ -44,4 +39,10 @@ function Stage:draw()
     love.graphics.setBlendMode("alpha", "premultiplied")
     love.graphics.draw(self.mainCanvas, 0, 0, 0, sx, sy)
     love.graphics.setBlendMode("alpha")
+end
+
+function Stage:destroy()
+    self.area:destroy()
+    self.area = nil
+    self.player = nil
 end
