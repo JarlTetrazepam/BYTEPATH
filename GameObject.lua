@@ -15,6 +15,7 @@ function GameObject:new(area, x, y, options)
     self.timer = Timer()
     self.creationTime = love.timer.getTime()
     self.dead = false
+    self.depth = options.depth or 50
 
 end
 

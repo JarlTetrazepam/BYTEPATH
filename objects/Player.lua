@@ -13,6 +13,21 @@ function Player:new(area, x, y, options)
     self.baseMaxVelocity = 1
     self.acceleration = 1
 
+    self.boostBaseResource = 100
+    self.boostResource = self.boostBaseResource
+    self.boostBaseRegen = 10
+    self.boostRegen = self.boostBaseRegen
+    self.boostBaseDrain = 50
+    self.boostDrain = self.boostBaseDrain
+    self.boostBlocked = false
+    self.boostUiColor = boostColor
+    self.boostUiSecondaryColor = {0.29, 0.50, 0.60}
+    self.boostUiWidth = 100 / self.boostBaseResource * self.boostResource
+    self.boostUiBackgroundWidth = 100 / self.boostBaseResource * self.boostResource
+    self.boostCooldown = 2
+
+    self.depth = 75
+
     self.trailColor = skillPointColor
 
     self.timer:every(0.24, function ()
@@ -38,17 +53,39 @@ function Player:update(dt)
     -- Boost controls
     self.maxVelocity = self.baseMaxVelocity
     self.boosting = false
-    if input:down("up") then
+    if input:down("up") and not self.boostBlocked then
         self.boosting = true
-        self.maxVelocity = 1.5 * self.baseMaxVelocity
+        self.maxVelocity = 1.8 * self.baseMaxVelocity
     end
-    if input:down("down") then
+    if input:down("down") and not self.boostBlocked then
         self.boosting = true
-        self.maxVelocity = 0.5 * self.baseMaxVelocity
+        self.maxVelocity = 0.75 * self.baseMaxVelocity
     end
     self.trailColor = skillPointColor
     if self.boosting then
+        self.boostResource = math.max(self.boostResource - self.boostDrain * dt, 0)
+        self.timer:after("boostUiBackgroundAfter", 0.15, function ()
+            self.timer:tween("boostUiBackgroundTween", 0.25, self, {boostUiBackgroundWidth = self.boostUiWidth}, "in-out-cubic")
+        end)
         self.trailColor = boostColor
+    end
+
+    -- Boost resource management
+    self.boostResource = math.min(self.boostResource + self.boostRegen * dt, self.boostBaseResource)
+    if self.boostResource < 1 then
+        if self.boosting then
+            self.boosting = false
+        end
+        self.boostBlocked = true
+        self.timer:after(self.boostCooldown, function ()
+            self.boostBlocked = false
+        end)
+    end
+
+    -- UI
+    self.boostUiWidth = 100 / self.boostBaseResource * self.boostResource
+    if self.boostUiBackgroundWidth < self.boostUiWidth then
+        self.boostUiBackgroundWidth = self.boostUiWidth
     end
 
     -- Basic movement
@@ -76,13 +113,22 @@ function Player:draw()
     for _, polygon in ipairs(self.polygons) do
         local points = M.map(polygon, function (value, key)
             if key % 2 == 1 then
-                return self.x + value --+ random(-1, 1)
+                return self.x + value + random(-0.5, 0.5)
             end
-            return self.y + value --+ random(-1, 1)
+            return self.y + value + random(-0.5, 0.5)
         end)
         love.graphics.polygon("line", points)
     end
     love.graphics.pop()
+
+    -- UI
+    love.graphics.setColor(self.boostUiSecondaryColor)
+    love.graphics.rectangle("fill", 10, 10, self.boostUiBackgroundWidth, 10)
+    if not self.boostBlocked then
+        love.graphics.setColor(self.boostUiColor)
+    end
+    love.graphics.rectangle("fill", 10, 10, self.boostUiWidth, 10)
+    love.graphics.setColor(defaultColor)
 end
 
 function Player:destroy()
@@ -189,6 +235,96 @@ function Player:shipManager()
             -2 * self.w, self.w/2,
             -2 * self.w, 1.5 * self.w,
             -1.5 * self.w, 1.5 * self.w
+        }
+    end
+
+    if self.ship == "Raider" then
+
+        self.timer:every(0.01, function ()
+            self.area:addGameObject("TrailParticle",
+            self.x - self.w * math.cos(self.radian),
+            self.y - self.w * math.sin(self.radian),
+            {parent = self, r = random(1.5, 2.5), duration = random(0.35, 0.4), color = self.trailColor})
+        end)
+
+        self.polygons[1] = {
+            self.w, 0,
+            0, -self.w/4,
+            -0.75 * self.w, 0,
+            0, self.w/4
+        }
+        self.polygons[2] = {
+            0, -self.w/4,
+            -0.3*self.w, -0.6 * self.w,
+            0.75*self.w, -self.w,
+            -0.75*self.w, -self.w,
+            -self.w, -0.6*self.w,
+            -0.75 * self.w, 0
+        }
+        self.polygons[3] = {
+            0, self.w/4,
+            -0.75 * self.w, 0,
+            -self.w, 0.6*self.w,
+            -0.75*self.w, self.w,
+            0.75*self.w, self.w,
+            -0.3*self.w, 0.6*self.w
+        }
+    end
+
+    if self.ship == "Zeta" then
+        self.timer:every(0.01, function ()
+            self.area:addGameObject("TrailParticle",
+            self.x - self.w * math.cos(self.radian),
+            self.y - self.w * math.sin(self.radian),
+            {parent = self, r = random(1.5, 2.5), duration = random(0.35, 0.4), color = self.trailColor})
+        end)
+
+        self.polygons[1] = {
+            self.w, 0,
+            0.8*self.w, -0.6*self.w,
+            0.6*self.w, -0.8*self.w,
+            0, -self.w,
+            -0.6*self.w, -0.8*self.w,
+            -0.8*self.w, -0.6*self.w,
+            -self.w, 0,
+            -0.8*self.w, 0.6*self.w,
+            -0.6*self.w, 0.8*self.w,
+            0, self.w,
+            0.6*self.w, 0.8*self.w,
+            0.8*self.w, 0.6*self.w
+        }
+        self.polygons[2] = {
+            0, -self.w,
+            -1.2*self.w, -self.w,
+            -0.8*self.w, -0.6*self.w,
+            -0.6*self.w, -0.8*self.w
+        }
+        self.polygons[3] = {
+            0, self.w,
+            -0.6*self.w, 0.8*self.w,
+            -0.8*self.w, 0.6*self.w,
+            -1.2*self.w, self.w
+        }
+    end
+
+    if self.ship == "Ray" then
+        self.timer:every(0.01, function ()
+            self.area:addGameObject("TrailParticle",
+                self.x - 1.2*self.w * math.cos(self.radian + math.pi*0.1944),
+                self.y - 1.2*self.w * math.sin(self.radian + math.pi*0.1944),
+                {parent = self, r = random(1, 2), duration = random(0.35, 0.4), color = self.trailColor})
+            self.area:addGameObject("TrailParticle",
+                self.x - 1.2*self.w * math.cos(self.radian - math.pi*0.1944),
+                self.y - 1.2*self.w * math.sin(self.radian - math.pi*0.1944),
+                {parent = self, r = random(1, 2), duration = random(0.35, 0.4), color = self.trailColor})
+        end)
+
+        self.polygons[1] = {
+            self.w, 0,
+            -self.w/2, -self.w/2,
+            -self.w, -self.w,
+            -self.w, self.w,
+            -self.w/2, self.w/2
         }
     end
 end

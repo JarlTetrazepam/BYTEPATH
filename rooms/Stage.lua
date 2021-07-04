@@ -5,7 +5,7 @@ function Stage:new()
     self.timer = Timer()
     self.mainCanvas = love.graphics.newCanvas(gw, gh)
 
-    self.playerObject = self.area:addGameObject("Player", gw/2, gh/2, {ship = "Whale"})
+    self.playerObject = self.area:addGameObject("Player", gw/2, gh/2, {ship = "Ray"})
 
     input:bind("a", "left")
     input:bind("d", "right")
