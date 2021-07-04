@@ -36,5 +36,11 @@ end
 
 function Ammo:die()
     self.area:addGameObject("ProjectileDeathEffect", self.x, self.y, {color = ammoColor, w = self.w/4 * 3, duration = random(0.1, 0.2)})
+    for i = 1, random(4,8) do
+        self.area:addGameObject("ExplodeParticle", self.x, self.y, {w = 3, color = ammoColor, velocity = random(0.5)})
+    end
+    if self.area.room.playerObject then
+        self.area.room.playerObject:changeAmmo(5)
+    end
     self.dead = true
 end

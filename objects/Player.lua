@@ -131,9 +131,7 @@ function Player:update(dt)
     -- Collision
     if not self.dead then
         for collidingObject, escapeVector in pairs(hc.collisions(self.physicObj)) do
-            print(0)
-            if collidingObject.object.class == "Ammo" then
-                print(1)
+            if collidingObject.object and collidingObject.object.class == "Ammo" then
                 collidingObject.object:die()
             end
         end
@@ -375,5 +373,13 @@ function Player:shipManager()
             -self.w, self.w,
             -self.w/2, self.w/2
         }
+    end
+end
+
+function Player:changeAmmo(amount)
+    if amount < 0 then
+        self.ammo = math.max(self.ammo + amount, 0)
+    else
+        self.ammo = math.min(self.ammo + amount, self.baseAmmo)
     end
 end

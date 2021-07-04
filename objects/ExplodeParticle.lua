@@ -10,6 +10,7 @@ function ExplodeParticle:new(area, x, y, options)
     self.w = 2
 
     self.physicObj = hc.rectangle(self.x, self.y, self.w, self.length)
+    self.physicObj.object = self
 
     self.timer:tween(options.duration or random(0.3, 0.5), self, {velocity = 0, length = 0, w = 0},
         "linear", function ()
