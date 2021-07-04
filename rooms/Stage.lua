@@ -5,10 +5,7 @@ function Stage:new()
     self.timer = Timer()
     self.mainCanvas = love.graphics.newCanvas(gw, gh)
 
-    self.playerObject = self.area:addGameObject("Player", gw/2, gh/2)
-    for i = 1, 10, 1 do
-        --self.area:addGameObject("Circle", random(gw), random(gh))
-    end
+    self.playerObject = self.area:addGameObject("Player", gw/2, gh/2, {ship = "Whale"})
 
     input:bind("a", "left")
     input:bind("d", "right")

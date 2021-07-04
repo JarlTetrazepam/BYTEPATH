@@ -17,13 +17,20 @@ function unitVector(vectorLengthX, vectorLengthY)
 end
 
 function random(min, max)
+    local output = nil
     if max then
         if max < min then
-            return love.math.random(max, min)
+            output = love.math.random(max, min)
+        else
+            output = love.math.random(min, max)
         end
-        return love.math.random(min, max)
+    else
+        output = love.math.random(min)
     end
-    return love.math.random(min)
+    if output == 0 then
+        return random(min, max)
+    end
+    return output
 end
 
 

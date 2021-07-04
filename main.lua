@@ -78,7 +78,7 @@ function love.draw()
 	if flashFrames then
 		love.graphics.setColor(backgroundColor)
 		love.graphics.rectangle("fill", 0, 	0, sx * gw, sy * gh)
-		love.graphics.setColor(1,1,1)
+		love.graphics.setColor(defaultColor)
 	end
 end
 

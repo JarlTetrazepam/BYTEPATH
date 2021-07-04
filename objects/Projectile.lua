@@ -4,7 +4,7 @@ function Projectile:new(area, x, y, options)
     self.super.new(self, area, x, y, options)
 
     self.r = options.r or 2
-    self.velocity = options.velocity or 1.5
+    self.velocity = options.velocity or 2
 
     self.physicObj = hc.circle(self.x, self.y, self.r)
     self.physicObj.object = self

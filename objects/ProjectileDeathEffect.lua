@@ -26,6 +26,7 @@ function ProjectileDeathEffect:draw()
 
     love.graphics.setColor(self.currentColor)
     love.graphics.rectangle("fill", self.x - self.w / 2, self.y - self.w / 2, self.w, self.w)
+    love.graphics.setColor(defaultColor)
     love.graphics.pop()
 end
 
