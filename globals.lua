@@ -1,6 +1,9 @@
 defaultColor = {0.87, 0.87, 0.87}
 backgroundColor = {0.06, 0.06, 0.06}
 ammoColor = {0.48, 0.78, 0.63}
+ammoUiSecondaryColor = {0.2, 0.55, 0.3}
 boostColor = {0.29, 0.76, 0.84}
+boostUiSecondaryColor = {0.29, 0.50, 0.60}
 hpColor = {0.94, 0.4, 0.27}
+hpUiSecondaryColor = {0.7, 0.1, 0.1}
 skillPointColor = {1, 0.77, 0.36}

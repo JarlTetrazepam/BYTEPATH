@@ -12,7 +12,9 @@ function Player:new(area, x, y, options)
     self.maxVelocity = 1
     self.baseMaxVelocity = 1
     self.acceleration = 1
+    self.class = "Player"
 
+    -- Boost
     self.boostBaseResource = 100
     self.boostResource = self.boostBaseResource
     self.boostBaseRegen = 10
@@ -21,10 +23,28 @@ function Player:new(area, x, y, options)
     self.boostDrain = self.boostBaseDrain
     self.boostBlocked = false
     self.boostUiColor = boostColor
-    self.boostUiSecondaryColor = {0.29, 0.50, 0.60}
+    self.boostUiSecondaryColor = boostUiSecondaryColor
     self.boostUiWidth = 100 / self.boostBaseResource * self.boostResource
-    self.boostUiBackgroundWidth = 100 / self.boostBaseResource * self.boostResource
+    self.boostUiBackgroundWidth = self.boostUiWidth
     self.boostCooldown = 2
+
+    -- HP
+    self.baseHp = 100
+    self.hp = self.baseHp
+    self.hpUiColor = hpColor
+    self.hpUiSecondaryColor = hpUiSecondaryColor
+    self.hpUiWidth = 100 / self.baseHp * self.hp
+    self.hpUiBackgroundWidth = self.hpUiWidth
+
+    -- Ammo
+    self.baseAmmo = 100
+    self.ammo = self.baseAmmo
+    self.ammoUiWidth = 100 / self.baseAmmo * self.ammo
+    self.ammoUiBackgroundWidth = self.ammoUiWidth
+    self.ammoUiColor = ammoColor
+    self.ammoUiSecondaryColor = ammoUiSecondaryColor
+
+    self.uiBarHeight = 5
 
     self.depth = 75
 
@@ -42,13 +62,17 @@ function Player:new(area, x, y, options)
     end)
 
     -- Ship picking
-    self.ship = options.ship or nil
+    self.ship = options.ship or "Fighter"
     self.polygons = {}
     self:shipManager()
 end
 
 function Player:update(dt)
     Player.super.update(self, dt)
+
+    -- HP
+
+    -- Ammo
 
     -- Boost controls
     self.maxVelocity = self.baseMaxVelocity
@@ -103,11 +127,22 @@ function Player:update(dt)
     if self.x < 0 or self.x > gw or self.y < 0 or self.y > gh then
         self:die()
     end
+
+    -- Collision
+    if not self.dead then
+        for collidingObject, escapeVector in pairs(hc.collisions(self.physicObj)) do
+            print(0)
+            if collidingObject.object.class == "Ammo" then
+                print(1)
+                collidingObject.object:die()
+            end
+        end
+    end
 end
 
 function Player:draw()
     pushRotate(self.x, self.y, self.radian)
-    love.graphics.setColor(backgroundColor)
+    love.graphics.setColor(0,0,0)
     self.physicObj:draw("line")
     love.graphics.setColor(defaultColor)
     for _, polygon in ipairs(self.polygons) do
@@ -122,12 +157,26 @@ function Player:draw()
     love.graphics.pop()
 
     -- UI
-    love.graphics.setColor(self.boostUiSecondaryColor)
-    love.graphics.rectangle("fill", 10, 10, self.boostUiBackgroundWidth, 10)
+    -- HP
+    love.graphics.setColor(self.hpUiSecondaryColor)
+    love.graphics.rectangle("fill", 10, 5, self.hpUiBackgroundWidth, self.uiBarHeight)
+    love.graphics.setColor(self.hpUiColor)
+    love.graphics.rectangle("fill", 10, 5, self.hpUiWidth, self.uiBarHeight)
+
+    -- Boost
+    love.graphics.setColor(boostUiSecondaryColor)
+    love.graphics.rectangle("fill", 10, 12, self.boostUiBackgroundWidth, self.uiBarHeight)
     if not self.boostBlocked then
         love.graphics.setColor(self.boostUiColor)
     end
-    love.graphics.rectangle("fill", 10, 10, self.boostUiWidth, 10)
+    love.graphics.rectangle("fill", 10, 12, self.boostUiWidth, self.uiBarHeight)
+
+    -- Ammo
+    love.graphics.setColor(self.ammoUiSecondaryColor)
+    love.graphics.rectangle("fill", 10, 19, self.ammoUiBackgroundWidth, self.uiBarHeight)
+    love.graphics.setColor(self.ammoUiColor)
+    love.graphics.rectangle("fill", 10, 19, self.ammoUiWidth, self.uiBarHeight)
+
     love.graphics.setColor(defaultColor)
 end
 

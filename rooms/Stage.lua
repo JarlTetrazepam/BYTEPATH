@@ -11,6 +11,10 @@ function Stage:new()
     input:bind("d", "right")
     input:bind("w", "up")
     input:bind("s", "down")
+
+    input:bind("p", function ()
+        self.area:addGameObject("Ammo", random(gw), random(gh))
+    end)
 end
 
 function Stage:update(dt)
