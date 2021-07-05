@@ -8,6 +8,7 @@ hc = require "libs/HC"
 require 'GameObject'
 require 'utils'
 require "globals"
+require "libs/utf8/utf8"
 
 function love.load()
 	timer = Timer()

@@ -14,6 +14,7 @@ function Stage:new()
 
     input:bind("p", function ()
         self.area:addGameObject("Ammo", random(gw), random(gh))
+        self.area:addGameObject("Booster")
     end)
 end
 

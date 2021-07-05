@@ -131,7 +131,13 @@ function Player:update(dt)
     -- Collision
     if not self.dead then
         for collidingObject, escapeVector in pairs(hc.collisions(self.physicObj)) do
-            if collidingObject.object and collidingObject.object.class == "Ammo" then
+            if collidingObject.object then
+                if collidingObject.object.class == "Ammo" then
+                    self:changeAmmo(5)
+                end
+                if collidingObject.object.class == "Booster" then
+                    self:changeBooster(25)
+                end
                 collidingObject.object:die()
             end
         end
@@ -140,7 +146,7 @@ end
 
 function Player:draw()
     pushRotate(self.x, self.y, self.radian)
-    love.graphics.setColor(0,0,0)
+    love.graphics.setColor(0,0,0,0)
     self.physicObj:draw("line")
     love.graphics.setColor(defaultColor)
     for _, polygon in ipairs(self.polygons) do
@@ -382,4 +388,8 @@ function Player:changeAmmo(amount)
     else
         self.ammo = math.min(self.ammo + amount, self.baseAmmo)
     end
+end
+
+function Player:changeBooster(amount)
+    self.boostResource = math.min(self.boostResource + amount, self.boostBaseResource)
 end
