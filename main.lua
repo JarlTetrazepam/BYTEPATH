@@ -4,6 +4,7 @@ Input = require 'libs/boipushy-master/Input'
 M = require 'libs/Moses-master/moses'
 Camera = require("libs/hump-master/camera")
 hc = require "libs/HC"
+font = love.graphics.newFont("libs/m5x7.ttf", 16)
 
 require 'GameObject'
 require 'utils'

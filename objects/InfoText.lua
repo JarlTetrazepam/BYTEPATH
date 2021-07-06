@@ -6,6 +6,7 @@ function InfoText:new(area, x, y, options)
     self.visible = true
     self.depth = 80
 
+    self.font = font
     self.text = options.text or "test"
     self.characters = {}
     for i = 1, #self.text do
@@ -30,7 +31,17 @@ end
 function InfoText:draw()
     if self.visible then
         love.graphics.setColor(self.color)
-
+        love.graphics.setFont(self.font)
+        for i = 1, #self.characters do
+            local width = 0
+            if i > 1 then
+                for j = 1, i-1 do
+                    width = width + self.font:getWidth(self.characters[j])
+                end
+            end
+            love.graphics.print(self.characters[i], self.x + width, self.y, 
+                                0, 1, 1, 0, self.font:getHeight()/2)
+        end
         love.graphics.setColor(defaultColor)
     end
 end

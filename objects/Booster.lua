@@ -53,6 +53,6 @@ end
 
 function Booster:die()
     self.area:addGameObject("BoosterEffect", self.physicObj:center())
-    self.area:addGameObject("InfoText", self.x, self.y, {text = "+BOOST", color = boostColor})
+    self.area:addGameObject("InfoText", self.x + self.w, self.y, {text = "+BOOST", color = boostColor})
     self.dead = true
 end

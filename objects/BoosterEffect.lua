@@ -17,7 +17,7 @@ function BoosterEffect:new(area, x, y, options)
             self.visible = not self.visible
         end, 6)
     end)
-    self.timer:tween(0.35, self, {expandValue = 2, widthOffset = self.w/2}, "in-out-cubic")
+    self.timer:tween(0.35, self, {expandValue = 1.5, widthOffset = self.w/4}, "in-out-cubic")
 end
 
 function BoosterEffect:update(dt)
