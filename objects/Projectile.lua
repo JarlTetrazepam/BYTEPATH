@@ -6,6 +6,8 @@ function Projectile:new(area, x, y, options)
     self.r = options.r or 2
     self.velocity = options.velocity or 2
 
+    self.color = hpColor
+
     self.physicObj = hc.circle(self.x, self.y, self.r)
     self.physicObj.object = self
 

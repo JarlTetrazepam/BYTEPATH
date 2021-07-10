@@ -85,7 +85,7 @@ function Player:update(dt)
         self.boosting = true
         self.maxVelocity = 0.75 * self.baseMaxVelocity
     end
-    self.trailColor = skillPointColor
+    self.trailColor = ammoColor
     if self.boosting then
         self.boostResource = math.max(self.boostResource - self.boostDrain * dt, 0)
         self.timer:after("boostUiBackgroundAfter", 0.15, function ()
@@ -137,6 +137,12 @@ function Player:update(dt)
                 end
                 if collidingObject.object.class == "Booster" then
                     self:changeBooster(25)
+                end
+                if collidingObject.object.class == "HpObject" then
+                    self:changeHp(25)
+                end
+                if collidingObject.object.class == "SkillPointObject" then
+                    changeSp(1)
                 end
                 collidingObject.object:die()
             end
@@ -383,13 +389,13 @@ function Player:shipManager()
 end
 
 function Player:changeAmmo(amount)
-    if amount < 0 then
-        self.ammo = math.max(self.ammo + amount, 0)
-    else
-        self.ammo = math.min(self.ammo + amount, self.baseAmmo)
-    end
+    self.ammo = math.max(math.min(self.ammo + amount, self.baseAmmo), 0)
 end
 
 function Player:changeBooster(amount)
-    self.boostResource = math.min(self.boostResource + amount, self.boostBaseResource)
+    self.boostResource = math.max(math.min(self.boostResource + amount, self.boostBaseResource), 0)
+end
+
+function Player:changeHp(amount)
+    self.hp = math.max(math.min(self.hp + amount, self.baseHp), 0)
 end

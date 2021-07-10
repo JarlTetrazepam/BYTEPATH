@@ -22,6 +22,9 @@ function Ammo:update(dt)
     end
     self.physicObj:rotate(math.pi/4 * dt)
 
+    if self.x < 0 or self.x > gw + self.w or self.y < 0 or self.y > gh then
+        self:die()
+    end
 end
 
 function Ammo:draw()

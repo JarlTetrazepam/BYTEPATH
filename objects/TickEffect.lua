@@ -7,7 +7,7 @@ function TickEffect:new(area, x, y, options)
     self.yOffset = 0
     self.parent = options.parent or nil
     self.color = defaultColor
-    self.barColor = {0,1,0}
+    self.barColor = skillPointColor
     self.depth = 100
 
     self.timer:tween(0.3, self, {h = 0, yOffset = self.h}, "in-out-cubic", function ()
