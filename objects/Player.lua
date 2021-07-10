@@ -144,7 +144,9 @@ function Player:update(dt)
                 if collidingObject.object.class == "SkillPointObject" then
                     changeSp(1)
                 end
-                collidingObject.object:die()
+                if not collidingObject.object.friendly then
+                    collidingObject.object:die()
+                end
             end
         end
     end
@@ -203,7 +205,7 @@ function Player:shoot()
     self.area:addGameObject("Projectile",
         self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
         self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
-        {radian = self.radian})
+        {radian = self.radian, friendly = true, velocity = self.velocity})
 end
 
 function Player:die()

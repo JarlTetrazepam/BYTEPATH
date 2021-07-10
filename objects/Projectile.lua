@@ -4,7 +4,8 @@ function Projectile:new(area, x, y, options)
     self.super.new(self, area, x, y, options)
 
     self.r = options.r or 2
-    self.velocity = options.velocity or 2
+
+    if options.velocity then self.velocity = options.velocity + 2 else self.velocity = 2 end
 
     self.color = hpColor
 
