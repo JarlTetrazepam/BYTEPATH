@@ -205,7 +205,7 @@ function Player:shoot()
     self.area:addGameObject("Projectile",
         self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
         self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
-        {radian = self.radian, friendly = true, velocity = self.velocity})
+        {radian = self.radian, friendly = true, velocity = self.velocity, color = hpColor})
 end
 
 function Player:die()

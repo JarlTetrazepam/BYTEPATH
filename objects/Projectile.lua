@@ -3,20 +3,16 @@ Projectile = GameObject:extend()
 function Projectile:new(area, x, y, options)
     self.super.new(self, area, x, y, options)
 
-    self.r = options.r or 2
+    self.w = options.w or 3
 
-    if options.velocity then self.velocity = options.velocity + 2 else self.velocity = 2 end
+    if options.velocity then self.velocity = options.velocity + 1.5 else self.velocity = 1.5 end
 
-    self.color = hpColor
+    self.color = options.color or defaultColor
 
-    self.physicObj = hc.circle(self.x, self.y, self.r)
+    self.physicObj = hc.rectangle(self.x - self.w/2, self.y - self.w, self.w, self.w * 2)
     self.physicObj.object = self
-
-    if not self.dead then
-        self.timer:after(2, function ()
-            self:die()
-        end)
-    end
+    
+    self.physicObj:setRotation(self.radian + math.rad(90))
 end
 
 function Projectile:update(dt)
@@ -26,6 +22,7 @@ function Projectile:update(dt)
         self.velocity * math.sin(self.radian))
 
     self.physicObj.x, self.physicObj.y = self.physicObj:center()
+    self.x, self.y = self.physicObj:center()
     -- Die when out of bounds
     if self.physicObj.x < 0 or self.physicObj.x > gw or self.physicObj.y < 0 or self.physicObj.y > gh then
         self:die()
@@ -33,8 +30,12 @@ function Projectile:update(dt)
 end
 
 function Projectile:draw()
+    pushRotate(self.x, self.y, self.radian + math.rad(90))
+    love.graphics.setColor(self.color)
+    love.graphics.rectangle("fill", self.x - self.w/2, self.y - self.w, self.w, self.w)
     love.graphics.setColor(defaultColor)
-    self.physicObj:draw("line")
+    love.graphics.rectangle("fill", self.x - self.w/2, self.y, self.w, self.w)
+    love.graphics.pop()
 end
 
 function Projectile:destroy()
@@ -45,6 +46,6 @@ function Projectile:die()
     self.area:addGameObject("ProjectileDeathEffect",
         self.physicObj.x,
         self.physicObj.y,
-        {color = hpColor, w = self.r * 3})
+        {color = self.color, w = self.w * 2})
     self.dead = true
 end
