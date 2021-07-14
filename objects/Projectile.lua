@@ -4,14 +4,22 @@ function Projectile:new(area, x, y, options)
     self.super.new(self, area, x, y, options)
 
     self.w = options.w or 3
+    self.h = options.h or self.w * 2
+    self.depth = 50
 
     if options.velocity then self.velocity = options.velocity + 1.5 else self.velocity = 1.5 end
 
-    self.color = options.color or defaultColor
+    self.attack = options.attack or "Neutral"
+    self.color = options.color or attacks[self.attack].color or defaultColor
+    if self.attack == "Spread" then
+        self.timer:every("colorAmmoHandle", 0.075, function ()
+            self.color = allColors[random(#allColors)]
+        end)
+    end
 
-    self.physicObj = hc.rectangle(self.x - self.w/2, self.y - self.w, self.w, self.w * 2)
+    self.physicObj = hc.rectangle(self.x - self.w/2, self.y - self.w, self.w, self.h)
     self.physicObj.object = self
-    
+
     self.physicObj:setRotation(self.radian + math.rad(90))
 end
 
@@ -32,9 +40,9 @@ end
 function Projectile:draw()
     pushRotate(self.x, self.y, self.radian + math.rad(90))
     love.graphics.setColor(self.color)
-    love.graphics.rectangle("fill", self.x - self.w/2, self.y - self.w, self.w, self.w)
+    love.graphics.rectangle("fill", self.x - self.w/2, self.y - self.h, self.w, self.h)
     love.graphics.setColor(defaultColor)
-    love.graphics.rectangle("fill", self.x - self.w/2, self.y, self.w, self.w)
+    love.graphics.rectangle("fill", self.x - self.w/2, self.y, self.w, self.h)
     love.graphics.pop()
 end
 

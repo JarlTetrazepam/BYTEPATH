@@ -14,8 +14,19 @@ negativeColors = M.map(defaultcolors, function (color)
         return 1-value
     end)
 end)
+allColors = M.append(defaultcolors, negativeColors)
 
 skillPoints = 0
 function changeSp(amount)
     skillPoints = math.max(skillPoints - amount, 0)
 end
+
+attacks = {
+    ["Neutral"] = {cooldown = 0.24, ammoCost = 0, abbreviation = "N", color = defaultColor},
+    ["Double"] = {cooldown = 0.32, ammoCost = 2, abbreviation = "2", color = ammoColor},
+    ["Triple"] = {cooldown = 0.32, ammoCost = 3, abbreviation = "3", color = boostColor},
+    ["Rapid"] = {cooldown = 0.12, ammoCost = 1, abbreviation = "R", color = defaultColor},
+    ["Spread"] = {cooldown = 0.16, ammoCost = 1, abbreviation = "RS", color = allColors[random(#allColors)]},
+    ["Back"] = {cooldown = 0.32, ammoCost = 2, abbreviation = "Ba", color = skillPointColor},
+    ["Side"] = {cooldown = 0.32, ammoCost = 3, abbreviation = "Si", color = boostColor}
+}

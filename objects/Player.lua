@@ -50,9 +50,6 @@ function Player:new(area, x, y, options)
 
     self.trailColor = skillPointColor
 
-    self.timer:every(0.24, function ()
-        self:shoot()
-    end)
     self.timer:every(5, function ()
         self:tick()
     end)
@@ -61,10 +58,15 @@ function Player:new(area, x, y, options)
         self:die()
     end)
 
+    self.shootTimer = 0
+    self:setAttack("Neutral")
+
     -- Ship picking
     self.ship = options.ship or "Fighter"
     self.polygons = {}
     self:shipManager()
+
+    self:setAttack("Side")
 end
 
 function Player:update(dt)
@@ -150,6 +152,18 @@ function Player:update(dt)
             end
         end
     end
+
+    -- Switch Attack type
+    if self.ammo == 0 then
+        self:setAttack("Neutral")
+    end
+
+    -- Shoot timer
+    self.shootTimer = self.shootTimer + dt
+    if attacks[self.currentAttack].cooldown < self.shootTimer then
+        self.shootTimer = 0
+        self:shoot()
+    end
 end
 
 function Player:draw()
@@ -202,10 +216,85 @@ function Player:shoot()
         (self.x + distanceFromShooter * math.cos(self.radian)),
         (self.y + distanceFromShooter * math.sin(self.radian)),
         {player = self, distanceFromShooter = distanceFromShooter})
-    self.area:addGameObject("Projectile",
+
+    if self.currentAttack == "Neutral" then
+        self.area:addGameObject("Projectile",
         self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
         self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
-        {radian = self.radian, friendly = true, velocity = self.velocity, color = hpColor})
+        {radian = self.radian, friendly = true, velocity = self.velocity})
+    end
+
+    if self.currentAttack == "Rapid" then
+        self:changeAmmo(-attacks[self.currentAttack].ammoCost)
+        self.area:addGameObject("Projectile",
+        self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
+        self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
+        {radian = self.radian, friendly = true, velocity = self.velocity, attack = self.currentAttack})
+    end
+
+    if self.currentAttack == "Double" then
+        self:changeAmmo(-attacks[self.currentAttack].ammoCost)
+        self.area:addGameObject("Projectile",
+            self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
+            self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
+            {radian = self.radian - math.rad(15), friendly = true, velocity = self.velocity, attack = self.currentAttack})
+        self.area:addGameObject("Projectile",
+            self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
+            self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
+            {radian = self.radian + math.rad(15), friendly = true, velocity = self.velocity, attack = self.currentAttack})
+    end
+
+    if self.currentAttack == "Triple" then
+        self:changeAmmo(-attacks[self.currentAttack].ammoCost)
+        self.area:addGameObject("Projectile",
+            self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
+            self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
+            {radian = self.radian - math.rad(15), friendly = true, velocity = self.velocity, attack = self.currentAttack})
+        self.area:addGameObject("Projectile",
+            self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
+            self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
+            {radian = self.radian + math.rad(15), friendly = true, velocity = self.velocity, attack = self.currentAttack})
+        self.area:addGameObject("Projectile",
+            self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
+            self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
+            {radian = self.radian, friendly = true, velocity = self.velocity, attack = self.currentAttack})
+    end
+
+    if self.currentAttack == "Spread" then
+        self:changeAmmo(-attacks[self.currentAttack].ammoCost)
+        self.area:addGameObject("Projectile",
+        self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
+        self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
+        {radian = self.radian + math.rad(random(-20, 20)), friendly = true, velocity = self.velocity, attack = self.currentAttack})
+    end
+
+    if self.currentAttack == "Back" then
+        self:changeAmmo(-attacks[self.currentAttack].ammoCost)
+        self.area:addGameObject("Projectile",
+        self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
+        self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
+        {radian = self.radian, friendly = true, velocity = self.velocity, attack = self.currentAttack})
+    self.area:addGameObject("Projectile",
+        self.x - 1.5 * distanceFromShooter * math.cos(self.radian),
+        self.y - 1.5 * distanceFromShooter * math.sin(self.radian),
+        {radian = self.radian - math.rad(180), friendly = true, velocity = self.velocity, attack = self.currentAttack})
+    end
+
+    if self.currentAttack == "Side" then
+        self:changeAmmo(-attacks[self.currentAttack].ammoCost)
+        self.area:addGameObject("Projectile",
+            self.x + 1.5 * distanceFromShooter * math.cos(self.radian),
+            self.y + 1.5 * distanceFromShooter * math.sin(self.radian),
+            {radian = self.radian, friendly = true, velocity = self.velocity, attack = self.currentAttack})
+        self.area:addGameObject("Projectile",
+            self.x + 1.5 * distanceFromShooter * math.cos(self.radian + math.rad(90)),
+            self.y + 1.5 * distanceFromShooter * math.sin(self.radian + math.rad(90)),
+            {radian = self.radian + math.rad(90), friendly = true, velocity = self.velocity, attack = self.currentAttack})
+        self.area:addGameObject("Projectile",
+            self.x + 1.5 * distanceFromShooter * math.cos(self.radian - math.rad(90)),
+            self.y + 1.5 * distanceFromShooter * math.sin(self.radian - math.rad(90)),
+            {radian = self.radian - math.rad(90), friendly = true, velocity = self.velocity, attack = self.currentAttack})
+    end
 end
 
 function Player:die()
@@ -392,6 +481,16 @@ end
 
 function Player:changeAmmo(amount)
     self.ammo = math.max(math.min(self.ammo + amount, self.baseAmmo), 0)
+
+    -- UI
+    self.ammoUiWidth = 100 / self.baseAmmo * self.ammo
+    self.timer:after("ammoUiBackgroundAfter", 0.1, function ()
+        self.timer:tween("ammoUiBackgroundTween", 0.1, self, {ammoUiBackgroundWidth = self.ammoUiWidth}, "in-out-cubic")
+    end)
+
+    if self.ammoUiBackgroundWidth < self.ammoUiWidth then
+        self.ammoUiBackgroundWidth = self.ammoUiWidth
+    end
 end
 
 function Player:changeBooster(amount)
@@ -400,4 +499,10 @@ end
 
 function Player:changeHp(amount)
     self.hp = math.max(math.min(self.hp + amount, self.baseHp), 0)
+end
+
+function Player:setAttack(type)
+    self.currentAttack = type
+    self.shotCooldown = attacks[type].cooldown
+    self:changeAmmo(self.baseAmmo)
 end
