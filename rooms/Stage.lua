@@ -18,6 +18,9 @@ function Stage:new()
         self.area:addGameObject("HpObject")
         self.area:addGameObject("SkillPointObject")
     end)
+    input:bind("o", function ()
+        self.area:addGameObject("AttackObject", random(gw), random(gh), {attack = "Side"})
+    end)
 end
 
 function Stage:update(dt)

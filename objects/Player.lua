@@ -65,8 +65,6 @@ function Player:new(area, x, y, options)
     self.ship = options.ship or "Fighter"
     self.polygons = {}
     self:shipManager()
-
-    self:setAttack("Side")
 end
 
 function Player:update(dt)
@@ -146,6 +144,11 @@ function Player:update(dt)
                 if collidingObject.object.class == "SkillPointObject" then
                     changeSp(1)
                 end
+
+                if collidingObject.object.class == "AttackObject" then
+                    self:setAttack(collidingObject.object.attack)
+                end
+
                 if not collidingObject.object.friendly then
                     collidingObject.object:die()
                 end
