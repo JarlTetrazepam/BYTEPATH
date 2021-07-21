@@ -2,14 +2,14 @@ AttackObjectEffect = GameObject:extend()
 
 function AttackObjectEffect:new(area, x, y, options)
     self.super.new(self, area, x, y, options)
-    self.color = options.color or defaultColor
+    self.color = defaultColor
     self.visible = true
     self.w = options.w or 11
     self.expandValue = 1
     self.widthOffset = 0
     self.depth = 80
     self.timer:after(0.2, function ()
-        self.color = boostColor
+        self.color = options.color
         self.timer:after(0.35, function ()
             self:die()
         end)

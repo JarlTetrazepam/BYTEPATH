@@ -90,3 +90,13 @@ end
 function flash(frames)
     flashFrames = frames
 end
+
+function tableRandom(t)
+    local keyset = {}
+    for key, value in pairs(t) do
+        table.insert(keyset, key)
+    end
+    local randomIndex = math.random(#keyset)
+
+    return keyset[randomIndex]
+end

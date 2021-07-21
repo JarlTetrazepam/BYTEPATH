@@ -3,10 +3,12 @@ AttackObject = GameObject:extend()
 function AttackObject:new(area, x, y, options)
     self.super.new(self, area, x, y, options)
 
-    self.attack = options.attack or "Double" -- Prevent game crash by defaulting to Double
+    self.attack = options.attack or "Double" -- Prevent game crash in edge cases by defaulting to Double
+    self.abbreviation = attacks[self.attack].abbreviation
     self.color = attacks[self.attack].color
+    self.font = font
 
-    self.w = options.w or 10
+    self.w = options.w or 16
     if random(-1, 1) > 0 then
         self.x = self.w
         self.startingSide = "left"
@@ -41,14 +43,15 @@ function AttackObject:update(dt)
 end
 
 function AttackObject:draw()
+    love.graphics.setFont(self.font)
     pushRotate(self.x + self.w/2, self.y + self.w/2, self.rotateFactor)
     love.graphics.setColor(self.color)
     self.physicObj:draw("line")
     love.graphics.setColor(defaultColor)
-    love.graphics.rectangle("line", self.x + 1, self.y + 1, self.w - self.w/4, self.h or self.w - self.w/4)
+    love.graphics.rectangle("line", self.x + 2, self.y + 2, self.w - self.w/4, self.h or self.w - self.w/4)
     love.graphics.setColor(self.color)
-    love.graphics.rectangle("fill", self.x + self.w/4 + 1, self.y + self.w/4 + 1, self.w/4, self.w/4)
     love.graphics.pop()
+    love.graphics.print(self.abbreviation, self.x + self.w/2, self.y + self.w/2 - 1, 0, 0.75, 0.75, self.font:getWidth(self.abbreviation)/2, self.font:getHeight()/2)
     love.graphics.setColor(defaultColor)
 end
 
